@@ -41,9 +41,17 @@ def main():
             raise Exception(f"Model type {model_type} is not supported. Please choose one of the following: LlamaCpp, GPT4All")
         
     qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents= not args.hide_source)
+
+    # BEGIN: 8f7d6t5r4e3w
+    questions = args.questions.split(",")
+    # END: 8f7d6t5r4e3w
+
+
+
     # Interactive questions and answers
-    while True:
-        query = input("\nEnter a query: ")
+    for query in questions:
+
+        # query = input("\nEnter a query: ")
         if query == "exit":
             break
         if query.strip() == "":
@@ -55,16 +63,19 @@ def main():
         answer, docs = res['result'], [] if args.hide_source else res['source_documents']
         end = time.time()
 
-        # Print the result
-        print("\n\n> Question:")
-        print(query)
-        print(f"\n> Answer (took {round(end - start, 2)} s.):")
-        print(answer)
 
+        
         # Print the relevant sources used for the answer
         for document in docs:
-            print("\n> " + document.metadata["source"] + ":")
-            print(document.page_content)
+            
+            with open(f"{query}.txt", "w") as f:
+                # Print the result
+                f.write("\n\n> Question:\n")
+                f.write(query + "\n")
+                f.write(f"\n> Answer (took {round(end - start, 2)} s.):\n")
+                f.write(answer + "\n")
+                f.write("\n> " + document.metadata["source"] + ":")
+                f.write(document.page_content)
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='privateGPT: Ask questions to your documents without an internet connection, '
@@ -75,6 +86,9 @@ def parse_arguments():
     parser.add_argument("--mute-stream", "-M",
                         action='store_true',
                         help='Use this flag to disable the streaming StdOut callback for LLMs.')
+
+    parser.add_argument("--questions", "-Q", type=str,
+                        help='A list of CSV questions separated by commas.')
 
     return parser.parse_args()
 
