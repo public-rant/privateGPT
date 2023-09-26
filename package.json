@@ -1,0 +1,13 @@
+{
+  "name": "privateGPT",
+  "version": "1.0.0",
+  "description": "Ingest documents",
+  "main": "index.js",
+  "repository": "https://github.com/public-rant/privateGPT.git",
+  "author": "Richard Anthony <82001325+public-rant@users.noreply.github.com>",
+  "license": "MIT",
+  "private": false,
+  "dependencies": {
+    "zx": "^7.2.3"
+  }
+}
